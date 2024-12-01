@@ -41,12 +41,17 @@ def find_nox_installation_path():
             return os.path.dirname(process.info['exe'])
     return None
     
-#ADB Default Port of Nox Player : 62001,62025,62026
-def connect_to_nox_adb(ip='127.0.0.1', port=62001):
+def connect_to_nox_adb(ip='127.0.0.1', ports=[62001, 62025, 62026]):
     if nox_installation_path:
-        adb_command = f'\"{nox_installation_path}\\nox_adb.exe\" connect {ip}:{port}'
-        result = subprocess.run(adb_command, shell=True, text=True, capture_output=True)
-        return result.stdout.strip()
+        for port in ports:
+            adb_command = f'\"{nox_installation_path}\\nox_adb.exe\" connect {ip}:{port}'
+            result = subprocess.run(adb_command, shell=True, text=True, capture_output=True)
+            if 'connected' in result.stdout.lower():
+                return result.stdout.strip()
+            elif 'failed' in result.stdout.lower():
+                continue
+
+        return "No port available for connection."
     else:
         return "Nox player not installed."
 
