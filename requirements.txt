@@ -1,3 +1,4 @@
 psutil
 pyOpenSSL
 Requests
+frida-tools
